@@ -3,17 +3,19 @@
   "name": "me.identik/firma",
   "title": "Identik Firma Digital",
   "description": "Firma digital argentina (Ley 25.506) con certificados de certificador licenciado.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "websiteUrl": "https://identik.me",
   "repository": {
-    "url": "https://github.com/pbullian/identik-mcp",
+    "url": "https://github.com/Identik-me/identik-mcp",
     "source": "github"
   },
   "icons": [
     {
       "src": "https://firma.identik.me/apple-touch-icon.png",
       "mimeType": "image/png",
-      "sizes": ["180x180"]
+      "sizes": [
+        "180x180"
+      ]
     }
   ],
   "remotes": [

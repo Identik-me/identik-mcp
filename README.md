@@ -299,7 +299,7 @@ Dos detalles de esta vía / two notes on this path:
 Este repositorio es instalable directamente como **extensión de Gemini CLI**:
 
 ```bash
-gemini extensions install pbullian/identik-mcp
+gemini extensions install Identik-me/identik-mcp
 ```
 
 La extensión registra las dos plataformas (`identik-electronica` y `identik-firma`) y pide los tokens durante la instalación, guardándolos en el keychain del sistema. Completá sólo el de la plataforma que usés y dejá el otro vacío.
@@ -406,7 +406,7 @@ Los manifiestos publicados están en [`servers/`](servers/). / The published man
 
 - **Token, precios, cuentas / tokens, pricing, accounts:** contacto@identik.me
 - **Web:** https://identik.me
-- **Problemas con estos manifiestos / issues with these manifests:** [issues de este repositorio](https://github.com/pbullian/identik-mcp/issues)
+- **Problemas con estos manifiestos / issues with these manifests:** [issues de este repositorio](https://github.com/Identik-me/identik-mcp/issues)
 
 ## Licencia / License
 

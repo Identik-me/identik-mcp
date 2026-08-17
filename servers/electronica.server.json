@@ -3,17 +3,19 @@
   "name": "me.identik/electronica",
   "title": "Identik Firma Electrónica",
   "description": "Firma electrónica argentina (Ley 25.506): enviar documentos a firmar, seguir estado y validar.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "websiteUrl": "https://identik.me",
   "repository": {
-    "url": "https://github.com/pbullian/identik-mcp",
+    "url": "https://github.com/Identik-me/identik-mcp",
     "source": "github"
   },
   "icons": [
     {
       "src": "https://electronica.identik.me/apple-touch-icon.png",
       "mimeType": "image/png",
-      "sizes": ["180x180"]
+      "sizes": [
+        "180x180"
+      ]
     }
   ],
   "remotes": [
