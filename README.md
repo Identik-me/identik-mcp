@@ -109,6 +109,17 @@ En todos los ejemplos, reemplazá `api_...` por tu token, y `electronica.identik
 
 In every example, replace `api_...` with your token, and `electronica.identik.me` with `firma.identik.me` for digital signature (or with the `sandbox-*` host to evaluate).
 
+| Cliente / Client | ¿Encabezado estático nativo? / Native static header? | Dónde / Where |
+|---|---|---|
+| [Claude Code](#claude-code) | Sí / Yes | `claude mcp add`, `.mcp.json` |
+| [Cursor](#cursor) | Sí / Yes | `~/.cursor/mcp.json` |
+| [VS Code / Copilot](#vs-code-github-copilot-agent-mode) | Sí / Yes | `.vscode/mcp.json` |
+| [Codex CLI](#codex-cli) | Sí / Yes | `~/.codex/config.toml` |
+| [OpenAI Agents SDK](#openai-agents-sdk-python) | Sí / Yes | código / code |
+| [OpenAI Responses API](#openai-responses-api-hosted-mcp-tool) | Sí / Yes | código / code |
+| [Gemini CLI](#gemini-cli) | Sí / Yes | extensión / extension |
+| [Claude Desktop](#claude-desktop) | **No** — vía `mcp-remote` / via `mcp-remote` | `claude_desktop_config.json` |
+
 ### Claude Code
 
 ```bash
@@ -116,7 +127,7 @@ claude mcp add identik --transport http https://electronica.identik.me/api/mcp \
   --header "Authorization: Bearer api_..."
 ```
 
-Forma equivalente en `.mcp.json` (versionable en el proyecto) / equivalent `.mcp.json` project file:
+`--header` se puede repetir. Forma equivalente en `.mcp.json` (versionable en el proyecto) / `--header` is repeatable. Equivalent `.mcp.json` project file:
 
 ```json
 {
@@ -125,12 +136,16 @@ Forma equivalente en `.mcp.json` (versionable en el proyecto) / equivalent `.mcp
       "type": "http",
       "url": "https://electronica.identik.me/api/mcp",
       "headers": {
-        "Authorization": "Bearer api_..."
+        "Authorization": "Bearer ${IDENTIK_TOKEN}"
       }
     }
   }
 }
 ```
+
+> `type` es **obligatorio** cuando hay `url`: una entrada con `url` y sin `type` se considera un error de configuración y el servidor se omite. Claude Code expande `${VAR}` y `${VAR:-default}` en `url` y en `headers`, así que el token puede quedar fuera del archivo versionado.
+>
+> `type` is **required** whenever `url` is present — an entry with `url` and no `type` is a configuration error and the server is skipped. Claude Code expands `${VAR}` and `${VAR:-default}` in `url` and `headers`, so the token need not be committed.
 
 ### Cursor
 
@@ -142,16 +157,22 @@ Forma equivalente en `.mcp.json` (versionable en el proyecto) / equivalent `.mcp
     "identik": {
       "url": "https://electronica.identik.me/api/mcp",
       "headers": {
-        "Authorization": "Bearer api_..."
+        "Authorization": "Bearer ${env:IDENTIK_TOKEN}"
       }
     }
   }
 }
 ```
 
+Cursor infiere que el servidor es remoto por la presencia de `url`: no lleva `type`. Si recibís un `401`, hay builds en los que `${env:...}` no se resuelve dentro de `headers`; en ese caso poné el token literal en `~/.cursor/mcp.json` (el global, **no** el `.cursor/mcp.json` versionado).
+
+Cursor infers a remote server from the presence of `url`, so no `type` field is needed. If you get a `401`, some builds fail to resolve `${env:...}` inside `headers`; put the literal token in `~/.cursor/mcp.json` (the global one, **not** the committed `.cursor/mcp.json`).
+
 ### VS Code (GitHub Copilot, agent mode)
 
-`.mcp.json` en el proyecto, o `mcp.json` del usuario. El bloque `inputs` evita dejar el token en el archivo:
+`.vscode/mcp.json` en el workspace, o el `mcp.json` del perfil de usuario (paleta de comandos → **MCP: Open User Configuration**). Ojo: la clave de nivel superior es `servers`, no `mcpServers`. El bloque `inputs` evita dejar el token en el archivo:
+
+`.vscode/mcp.json` in the workspace, or the user-profile `mcp.json` (Command Palette → **MCP: Open User Configuration**). Note the top-level key is `servers`, not `mcpServers`. The `inputs` block keeps the token out of the file:
 
 ```json
 {
@@ -174,6 +195,46 @@ Forma equivalente en `.mcp.json` (versionable en el proyecto) / equivalent `.mcp
   }
 }
 ```
+
+VS Code pide el token en la primera conexión y lo guarda de forma segura, así que no queda nada secreto en el repositorio.
+
+VS Code prompts for the token on first connect and stores it securely, so no secret lands in git.
+
+> Con el **Agent Host** de VS Code, los servidores que usan `${input:...}` no se reenvían. Para configuración portable usá un `.mcp.json` del workspace o `~/.copilot/mcp-config.json` (esquema distinto: clave `mcpServers` y campo `tools`).
+>
+> With VS Code's **Agent Host**, servers using `${input:...}` are not forwarded. For portable configuration use a workspace `.mcp.json` or `~/.copilot/mcp-config.json` (different schema: `mcpServers` key plus a `tools` field).
+
+### Codex CLI
+
+En `~/.codex/config.toml`, con el token fuera del archivo (Codex agrega el prefijo `Bearer`):
+
+In `~/.codex/config.toml`, keeping the token out of the file (Codex adds the `Bearer` prefix itself):
+
+```toml
+[mcp_servers.identik]
+url = "https://electronica.identik.me/api/mcp"
+bearer_token_env_var = "IDENTIK_TOKEN"
+```
+
+Se puede generar con / can be generated with:
+
+```bash
+codex mcp add identik --url https://electronica.identik.me/api/mcp \
+  --bearer-token-env-var IDENTIK_TOKEN
+```
+
+Equivalente con el encabezado explícito / equivalent with an explicit header:
+
+```toml
+[mcp_servers.identik]
+url = "https://electronica.identik.me/api/mcp"
+http_headers = { Authorization = "Bearer api_..." }
+tool_timeout_sec = 120
+```
+
+> `codex mcp add` no tiene flag para encabezados arbitrarios: si necesitás `http_headers`, editá `config.toml` a mano.
+>
+> `codex mcp add` has no flag for arbitrary headers — hand-edit `config.toml` if you need `http_headers`.
 
 ### OpenAI Agents SDK (Python)
 
@@ -212,7 +273,7 @@ curl https://api.openai.com/v1/responses \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gpt-5",
+    "model": "gpt-5.6",
     "tools": [{
       "type": "mcp",
       "server_label": "identik",
@@ -227,6 +288,11 @@ curl https://api.openai.com/v1/responses \
 > `require_approval` en `"always"` es lo recomendado: `enviar_documento` manda emails reales y consume crédito.
 >
 > Keep `require_approval` at `"always"`: `enviar_documento` sends real emails and consumes credit.
+
+Dos detalles de esta vía / two notes on this path:
+
+- El token va en **`headers`**, no en `authorization`: ese campo es para un access token de OAuth, que este servidor no usa. / The token goes in **`headers`**, not `authorization` — that field is for an OAuth access token, which this server does not use.
+- A diferencia de los demás clientes, acá **OpenAI** se conecta al servidor desde su propia infraestructura, no desde tu máquina. / Unlike the other clients, here **OpenAI** connects to the server from its own infrastructure, not from your machine.
 
 ### Gemini CLI
 
@@ -253,9 +319,12 @@ See [`gemini-extension.json`](gemini-extension.json) and [`GEMINI.md`](GEMINI.md
 
 ### Claude Desktop
 
-Claude Desktop no acepta encabezados HTTP estáticos en sus conectores remotos, así que el servidor se conecta a través del puente [`mcp-remote`](https://www.npmjs.com/package/mcp-remote). En `claude_desktop_config.json`:
+El archivo de configuración de Claude Desktop admite solamente servidores stdio, y sus **conectores personalizados** piden una URL con OAuth (no aceptan un encabezado estático). Así que el servidor se conecta a través del puente [`mcp-remote`](https://www.npmjs.com/package/mcp-remote).
 
-Claude Desktop does not accept static HTTP headers on remote connectors, so the server is bridged through [`mcp-remote`](https://www.npmjs.com/package/mcp-remote). In `claude_desktop_config.json`:
+Claude Desktop's config file takes stdio servers only, and its **custom connectors** dialog asks for a URL with OAuth (no static-header field). So the server is bridged through [`mcp-remote`](https://www.npmjs.com/package/mcp-remote).
+
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
 ```json
 {
@@ -266,8 +335,8 @@ Claude Desktop does not accept static HTTP headers on remote connectors, so the 
         "-y",
         "mcp-remote",
         "https://electronica.identik.me/api/mcp",
-        "--header",
-        "Authorization:${IDENTIK_AUTH}"
+        "--transport", "http-only",
+        "--header", "Authorization:${IDENTIK_AUTH}"
       ],
       "env": {
         "IDENTIK_AUTH": "Bearer api_..."
@@ -277,9 +346,17 @@ Claude Desktop does not accept static HTTP headers on remote connectors, so the 
 }
 ```
 
+`--transport http-only` evita que `mcp-remote` pruebe primero SSE, que este servidor no expone. Requiere Node.js instalado.
+
+`--transport http-only` stops `mcp-remote` from probing SSE first, which this server does not expose. Requires Node.js.
+
 > El valor va como `Authorization:${IDENTIK_AUTH}` **sin espacio** después de los dos puntos: `mcp-remote` parte el argumento en el primer `:`, y algunos runtimes de Claude Desktop cortan los argumentos que contienen espacios. El espacio real viaja dentro de la variable de entorno.
 >
 > Note the `Authorization:${IDENTIK_AUTH}` form with **no space** after the colon: `mcp-remote` splits on the first `:`, and some Claude Desktop runtimes split arguments containing spaces. The real space travels inside the env var.
+
+> La pestaña **Code** de Claude Desktop (Claude Code embebido) sí lee `~/.claude.json` y `.mcp.json`, así que ahí funciona la forma nativa `type: "http"` + `headers` de más arriba. La limitación es sólo de la superficie de chat.
+>
+> Claude Desktop's **Code** tab (embedded Claude Code) does read `~/.claude.json` and `.mcp.json`, so the native `type: "http"` + `headers` form above works there. The limitation applies only to the chat surface.
 
 ---
 
