@@ -1,0 +1,38 @@
+{
+  "name": "identik-mcp",
+  "version": "1.0.0",
+  "description": "Firma electrónica y firma digital argentina (Ley 25.506) vía Identik: crear documentos desde plantillas, enviarlos a firmar, seguir su estado y verificar firmas.",
+  "mcpServers": {
+    "identik-electronica": {
+      "url": "https://electronica.identik.me/api/mcp",
+      "type": "http",
+      "headers": {
+        "Authorization": "Bearer ${IDENTIK_ELECTRONICA_TOKEN}"
+      },
+      "timeout": 60000
+    },
+    "identik-firma": {
+      "url": "https://firma.identik.me/api/mcp",
+      "type": "http",
+      "headers": {
+        "Authorization": "Bearer ${IDENTIK_FIRMA_TOKEN}"
+      },
+      "timeout": 60000
+    }
+  },
+  "settings": [
+    {
+      "name": "Token de firma electrónica",
+      "description": "Token de API de Identik Firma Electrónica (empieza con api_). Dejalo vacío si sólo usás firma digital. Solicitalo en contacto@identik.me o generalo en Configuración → API Tokens.",
+      "envVar": "IDENTIK_ELECTRONICA_TOKEN",
+      "sensitive": true
+    },
+    {
+      "name": "Token de firma digital",
+      "description": "Token de API de Identik Firma Digital (empieza con api_). Dejalo vacío si sólo usás firma electrónica. Solicitalo en contacto@identik.me o generalo en Configuración → API Tokens.",
+      "envVar": "IDENTIK_FIRMA_TOKEN",
+      "sensitive": true
+    }
+  ],
+  "contextFileName": "GEMINI.md"
+}
