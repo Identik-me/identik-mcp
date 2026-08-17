@@ -28,9 +28,9 @@ Identik exposes **two** MCP servers, one per signature level. The tool set is id
 | Efecto legal / Legal effect | Firma electrónica con evidencia completa | Presunción legal de autoría e integridad |
 | Verificación biométrica opcional (DNI + prueba de vida) / Optional biometric ID check | Sí / Yes | No aplica (la identidad la aporta el certificado) / N/A (identity comes from the certificate) |
 
-Los **sandboxes** sirven para evaluar la integración sin efectos legales ni consumo de créditos de producción. Los documentos que emiten quedan marcados como de PRUEBA.
+Los **sandboxes** son entornos separados, con sus propias cuentas, datos y créditos: sirven para desarrollar y evaluar la integración sin tocar producción. `validar_pdf` informa si un documento es de PRUEBA. Confirmá el alcance de tu sandbox con contacto@identik.me antes de usarlo para nada con efecto legal.
 
-The **sandboxes** let you evaluate the integration with no legal effect and no production credit consumption. Documents they issue are marked as TEST documents.
+The **sandboxes** are separate environments with their own accounts, data and credits — use them to build and evaluate the integration without touching production. `validar_pdf` reports whether a document is a TEST document. Confirm the scope of your sandbox with contacto@identik.me before relying on it for anything with legal effect.
 
 ---
 

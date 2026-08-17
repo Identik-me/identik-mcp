@@ -35,4 +35,4 @@ listar_plantillas  →  crear_documento_desde_plantilla  →  [confirmación hum
 
 - `401` → falta el token o es inválido. El token va en `Authorization: Bearer api_...` (variables `IDENTIK_ELECTRONICA_TOKEN` / `IDENTIK_FIRMA_TOKEN`).
 - `410` en `descargar_documento_firmado` → venció el plazo de resguardo del documento.
-- Para probar sin efectos legales ni consumo de créditos de producción, usá los entornos sandbox: `sandbox-electronica.identik.me` y `sandbox-firma.identik.me`.
+- Para desarrollar y probar sin tocar producción, usá los entornos sandbox: `sandbox-electronica.identik.me` y `sandbox-firma.identik.me`.
