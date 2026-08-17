@@ -28,9 +28,9 @@ Identik exposes **two** MCP servers, one per signature level. The tool set is id
 | Efecto legal / Legal effect | Firma electrónica con evidencia completa | Presunción legal de autoría e integridad |
 | Verificación biométrica opcional (DNI + prueba de vida) / Optional biometric ID check | Sí / Yes | No aplica (la identidad la aporta el certificado) / N/A (identity comes from the certificate) |
 
-Los **sandboxes** son entornos separados, con sus propias cuentas, datos y créditos: sirven para desarrollar y evaluar la integración sin tocar producción. `validar_pdf` informa si un documento es de PRUEBA. Confirmá el alcance de tu sandbox con contacto@identik.me antes de usarlo para nada con efecto legal.
+Los **sandboxes** son entornos separados, con sus propias cuentas, datos, créditos y base de datos: sirven para desarrollar y evaluar la integración sin tocar producción. Los documentos que emiten **no tienen validez**, por diseño y de forma verificable: la constancia sale marcada «PRUEBA — FIRMA NO VÁLIDA», el sello se hace con un certificado de prueba distinto al de producción, y el validador público lo reconoce y rechaza el documento como de prueba (`validar_pdf` devuelve `testEnvironment: true` y `ok: false`).
 
-The **sandboxes** are separate environments with their own accounts, data and credits — use them to build and evaluate the integration without touching production. `validar_pdf` reports whether a document is a TEST document. Confirm the scope of your sandbox with contacto@identik.me before relying on it for anything with legal effect.
+The **sandboxes** are separate environments with their own accounts, data, credits and database — use them to build and evaluate the integration without touching production. Documents they issue are **not valid**, by design and verifiably so: the audit certificate is watermarked «PRUEBA — FIRMA NO VÁLIDA», sealing uses a test certificate distinct from the production one, and the public validator recognises it and rejects the document as a test (`validar_pdf` returns `testEnvironment: true` and `ok: false`).
 
 ---
 
