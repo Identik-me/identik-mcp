@@ -2,9 +2,9 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "me.identik/electronica",
   "title": "Identik Firma Electrónica",
-  "description": "Firma electrónica argentina (Ley 25.506): enviar documentos a firmar, seguir estado y validar.",
-  "version": "1.0.1",
-  "websiteUrl": "https://identik.me",
+  "description": "Firma electrónica: preparar, enviar y seguir documentos; descargar PDF y constancia. Argentina.",
+  "version": "1.0.2",
+  "websiteUrl": "https://identik.me/developers/",
   "repository": {
     "url": "https://github.com/Identik-me/identik-mcp",
     "source": "github"
@@ -25,7 +25,7 @@
       "headers": [
         {
           "name": "Authorization",
-          "description": "Token de API de Identik. Formato: 'Bearer api_...'. Solicitalo en contacto@identik.me o generalo en Configuración → API Tokens.",
+          "description": "Token de API del equipo. Formato: Bearer api_... Generar en Configuración → API Tokens. Requerido para operaciones privadas; initialize y tools/list son públicos.",
           "isRequired": true,
           "isSecret": true,
           "format": "string"

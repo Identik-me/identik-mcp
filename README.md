@@ -6,6 +6,12 @@
 
 **EN** · Remote [MCP](https://modelcontextprotocol.io) servers for **[Identik](https://identik.me)**, an Argentine e-signature platform (Ley 25.506). Let an AI agent create a document from a template, send it out for signature, track status, download the signed PDF with its audit certificate, and cryptographically verify signatures.
 
+[Documentación para desarrolladores / Developer hub](https://identik.me/developers/) · [Firma electrónica](https://identik.me/firma-electronica/) · [Firma digital](https://identik.me/firma-digital/) · [Guías / Guides](https://identik.me/academia/)
+
+El agente prepara y gestiona el circuito documental. **La persona firmante autoriza la firma en la plataforma**; el MCP no sustituye ese consentimiento ni solicita su PIN u OTP.
+
+The agent prepares and manages the document workflow. **The human signer authorizes the signature in the platform**; MCP does not replace that consent or ask for the signer's PIN or OTP.
+
 > Este repositorio contiene **documentación y manifiestos** para conectarse a los servidores MCP alojados por Identik. No contiene el código del producto (Identik es un servicio comercial alojado).
 >
 > This repository holds **documentation and manifests** for connecting to Identik's hosted MCP servers. It does not contain the product source (Identik is a commercial hosted service).
@@ -38,7 +44,12 @@ The **sandboxes** are separate environments with their own accounts, data, credi
 
 - **Transporte / Transport:** Streamable HTTP, **stateless**. Sólo `POST` (`GET` y `DELETE` devuelven `405`). / POST only (`GET` and `DELETE` return `405`).
 - **Autenticación / Authentication:** encabezado HTTP `Authorization: Bearer api_...`
-- **Sin OAuth.** El token es un token de API por cuenta. / **No OAuth.** The token is a per-account API token.
+- **Servidores directos:** token de API del equipo. / **Direct servers:** team API token.
+- **Descubrimiento público:** `initialize` y `tools/list` no requieren credenciales. Las operaciones de cuenta y documentos sí requieren un token válido. / **Public discovery:** `initialize` and `tools/list` do not require credentials. Account and document operations require a valid token.
+
+Existe además un conector OAuth para OpenAI en [`connect.identik.me`](https://connect.identik.me), con endpoint `https://connect.identik.me/mcp`. Tiene su propio flujo de autorización y lista de clientes permitidos; no sustituye los endpoints directos de esta guía. Su disponibilidad en el directorio de OpenAI depende del proceso de revisión de OpenAI.
+
+An OpenAI OAuth connector is also available at [`connect.identik.me`](https://connect.identik.me), using `https://connect.identik.me/mcp`. It has a separate authorization flow and client allowlist; use the direct endpoints in this guide for API-token integrations. Availability in OpenAI's directory depends on OpenAI's review process.
 
 ### Cómo obtener un token / How to get a token
 
@@ -46,14 +57,14 @@ The **sandboxes** are separate environments with their own accounts, data, credi
 
 **An Identik API token is required.** Request one at **contacto@identik.me**, or generate it in your account under **Configuración → API Tokens**.
 
-Sin token, el servidor responde `401`:
+Sin token, las operaciones privadas responden `401`. El catálogo de herramientas es público:
 
 ```console
 $ curl -sS -X POST https://electronica.identik.me/api/mcp \
     -H 'Content-Type: application/json' \
     -H 'Accept: application/json, text/event-stream' \
     -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
-{"jsonrpc":"2.0","error":{"code":-32001,"message":"Falta el token de API (encabezado Authorization: Bearer api_...)."},"id":null}
+# HTTP 200: result.tools contiene las 11 herramientas / contains all 11 tools.
 ```
 
 Ver [`examples/smoke-test.sh`](examples/smoke-test.sh). / See [`examples/smoke-test.sh`](examples/smoke-test.sh).
@@ -62,9 +73,9 @@ Ver [`examples/smoke-test.sh`](examples/smoke-test.sh). / See [`examples/smoke-t
 
 ## Herramientas / Tools
 
-Diez herramientas, con nombres en español (la plataforma es de mercado argentino). Idénticas en ambas plataformas, salvo lo indicado.
+Once herramientas, con nombres en español (la plataforma es de mercado argentino). Idénticas en ambas plataformas, salvo lo indicado.
 
-Ten tools, named in Spanish (the platform targets the Argentine market). Identical across both platforms except where noted.
+Eleven tools, named in Spanish (the platform targets the Argentine market). Identical across both platforms except where noted.
 
 | Herramienta / Tool | Qué hace / What it does |
 |---|---|
@@ -75,6 +86,7 @@ Ten tools, named in Spanish (the platform targets the Argentine market). Identic
 | `enviar_documento` | Envía los emails de invitación y pone el documento en firma. **Acá se consume el crédito.** |
 | `reenviar_invitacion` | Reenvía el email de firma a firmantes que todavía no firmaron. |
 | `descargar_documento_firmado` | Devuelve una URL firmada de descarga del PDF (con la constancia). Pasado el plazo de resguardo responde `410`. |
+| `descargar_constancia` | Obtiene la constancia de firma del documento, con la evidencia y los eventos registrados. |
 | `traza_auditoria` | Traza de auditoría completa del documento en JSON: creación, envío, apertura y firmas, con fecha, IP y dispositivo. |
 | `validar_pdf` | Verifica criptográficamente las firmas de un PDF: integridad, cadena, sello de tiempo RFC-3161, y si es un documento de PRUEBA. |
 | `estado_cuenta` | Créditos de documentos disponibles y totales de la cuenta. |
