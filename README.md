@@ -322,6 +322,10 @@ La extensión registra las dos plataformas (`identik-electronica` y `identik-fir
 
 The extension registers both platforms (`identik-electronica` and `identik-firma`) and prompts for the tokens at install time, storing them in the OS keychain. Fill in only the platform you use and leave the other blank.
 
+Gemini CLI sólo pregunta por los tokens al instalar si `experimental.extensionConfig` está activado en `settings.json`; si no te los pide, cargalos con `gemini extensions config identik-mcp` o por variables de entorno.
+
+Gemini CLI prompts for the tokens at install time only when `experimental.extensionConfig` is enabled in `settings.json`; if it doesn't ask, set them with `gemini extensions config identik-mcp` or via environment variables.
+
 También podés pasarlos por entorno / you can also supply them via the environment:
 
 ```bash

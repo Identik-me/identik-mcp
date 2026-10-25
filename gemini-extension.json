@@ -1,6 +1,6 @@
 {
   "name": "identik-mcp",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Firma electrónica y firma digital argentina (Ley 25.506) vía Identik: crear documentos desde plantillas, enviarlos a firmar, seguir su estado y verificar firmas.",
   "mcpServers": {
     "identik-electronica": {
