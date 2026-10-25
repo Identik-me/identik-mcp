@@ -51,6 +51,10 @@ Existe además un conector OAuth para OpenAI en [`connect.identik.me`](https://c
 
 An OpenAI OAuth connector is also available at [`connect.identik.me`](https://connect.identik.me), using `https://connect.identik.me/mcp`. It has a separate authorization flow and client allowlist; use the direct endpoints in this guide for API-token integrations. Availability in OpenAI's directory depends on OpenAI's review process.
 
+Para Claude hay un conector OAuth propio en [`claude-connect.identik.me`](https://claude-connect.identik.me), con endpoint `https://claude-connect.identik.me/mcp`: sirve como **conector personalizado** en Claude (web, Desktop y Cowork) sin `mcp-remote` ni encabezado estático, y se distribuye además como plugin de Claude Code con una skill ([`Identik-me/identik-claude-plugin`](https://github.com/Identik-me/identik-claude-plugin)): `claude plugin marketplace add Identik-me/identik-claude-plugin` y luego `claude plugin install identik@identik`. Una conexión admite Firma Digital, Firma Electrónica o ambas; la persona ingresa los tokens de su equipo en la página de consentimiento de Identik, nunca en el chat. Su inclusión en el directorio de Anthropic depende del proceso de revisión de Anthropic.
+
+For Claude there is a dedicated OAuth connector at [`claude-connect.identik.me`](https://claude-connect.identik.me), endpoint `https://claude-connect.identik.me/mcp`: add it as a **custom connector** in Claude (web, Desktop and Cowork) with no `mcp-remote` or static header, or install the Claude Code plugin with its skill ([`Identik-me/identik-claude-plugin`](https://github.com/Identik-me/identik-claude-plugin)): `claude plugin marketplace add Identik-me/identik-claude-plugin`, then `claude plugin install identik@identik`. One connection covers Firma Digital, Firma Electrónica or both; the person enters their team tokens on Identik's consent page, never in the chat. Availability in Anthropic's directory depends on Anthropic's review process.
+
 ### Cómo obtener un token / How to get a token
 
 **Requiere un token de API de Identik.** Solicitalo en **contacto@identik.me**, o generalo desde tu cuenta en **Configuración → API Tokens**.
@@ -334,6 +338,10 @@ See [`gemini-extension.json`](gemini-extension.json) and [`GEMINI.md`](GEMINI.md
 El archivo de configuración de Claude Desktop admite solamente servidores stdio, y sus **conectores personalizados** piden una URL con OAuth (no aceptan un encabezado estático). Así que el servidor se conecta a través del puente [`mcp-remote`](https://www.npmjs.com/package/mcp-remote).
 
 Claude Desktop's config file takes stdio servers only, and its **custom connectors** dialog asks for a URL with OAuth (no static-header field). So the server is bridged through [`mcp-remote`](https://www.npmjs.com/package/mcp-remote).
+
+> Alternativa sin puente: agregá `https://claude-connect.identik.me/mcp` como conector personalizado (OAuth, ver [Transporte y autenticación](#transporte-y-autenticación--transport-and-authentication)). Lo que sigue aplica a los endpoints directos con token.
+>
+> Bridge-free alternative: add `https://claude-connect.identik.me/mcp` as a custom connector (OAuth, see [Transport and authentication](#transporte-y-autenticación--transport-and-authentication)). The rest of this section covers the direct token endpoints.
 
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
